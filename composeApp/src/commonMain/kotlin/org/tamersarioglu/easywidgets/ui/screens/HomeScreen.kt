@@ -73,7 +73,10 @@ fun HomeScreen(
                 items(widgets) { widget ->
                     WidgetCard(
                         widget = widget,
-                        onCardClick = onWidgetClick,
+                        onCardClick = { clickedWidget ->
+                            println("HomeScreen: Widget clicked: ${clickedWidget.name}")
+                            onWidgetClick(clickedWidget)
+                        },
                         onFavoriteToggle = onFavoriteToggle
                     )
                 }
@@ -98,7 +101,7 @@ fun CategorySelector(
             onClick = { onCategorySelected(null) }
         )
         
-        WidgetCategory.values().forEach { category ->
+        WidgetCategory.entries.forEach { category ->
             CategoryChip(
                 title = category.title,
                 selected = selectedCategory == category,

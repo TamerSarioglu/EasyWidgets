@@ -59,7 +59,9 @@ fun FavoritesScreen(
                     items(favoriteWidgets) { widget ->
                         WidgetCard(
                             widget = widget,
-                            onCardClick = onWidgetClick,
+                            onCardClick = { clickedWidget ->
+                                onWidgetClick(clickedWidget)
+                            },
                             onFavoriteToggle = onFavoriteToggle
                         )
                     }

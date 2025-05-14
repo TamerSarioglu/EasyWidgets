@@ -3,7 +3,6 @@ package org.tamersarioglu.easywidgets.ui.navigation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,9 +15,10 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -80,8 +80,12 @@ fun AppDrawer(
                         closeDrawer()
                     }
                 )
-                
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+                HorizontalDivider(
+                    Modifier.padding(vertical = 8.dp),
+                    DividerDefaults.Thickness,
+                    DividerDefaults.color
+                )
                 
                 Text(
                     text = "Widget Categories",
@@ -90,7 +94,7 @@ fun AppDrawer(
                     fontWeight = FontWeight.Bold
                 )
                 
-                WidgetCategory.values().forEach { category ->
+                WidgetCategory.entries.forEach { category ->
                     val selected = when (currentScreen) {
                         is Screen.Category -> currentScreen.category == category
                         else -> false
@@ -198,8 +202,13 @@ fun AppScaffold(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onDrawerClick) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    if (currentScreen is Screen.WidgetDetail) {
+                        // Don't show drawer menu for widget detail - navigation is handled in WidgetDetailScreen
+                        // The back button is already in WidgetDetailScreen
+                    } else {
+                        IconButton(onClick = onDrawerClick) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

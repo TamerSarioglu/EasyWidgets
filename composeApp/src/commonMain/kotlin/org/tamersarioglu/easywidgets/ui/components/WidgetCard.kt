@@ -31,7 +31,10 @@ fun WidgetCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { onCardClick(widget) },
+            .clickable { 
+                println("Widget clicked: ${widget.name}")
+                onCardClick(widget) 
+            },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         )
@@ -48,10 +51,14 @@ fun WidgetCard(
                 Text(
                     text = widget.name,
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
                 )
                 
-                IconButton(onClick = { onFavoriteToggle(widget) }) {
+                IconButton(onClick = { 
+                    println("Favorite toggled for: ${widget.name}")
+                    onFavoriteToggle(widget)
+                }) {
                     Icon(
                         imageVector = if (widget.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = if (widget.isFavorite) "Remove from favorites" else "Add to favorites",

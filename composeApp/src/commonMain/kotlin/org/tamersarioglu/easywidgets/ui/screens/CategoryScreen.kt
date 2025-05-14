@@ -83,7 +83,9 @@ fun CategoryScreen(
                     items(widgets) { widget ->
                         WidgetCard(
                             widget = widget,
-                            onCardClick = onWidgetClick,
+                            onCardClick = { clickedWidget ->
+                                onWidgetClick(clickedWidget)
+                            },
                             onFavoriteToggle = onFavoriteToggle
                         )
                     }

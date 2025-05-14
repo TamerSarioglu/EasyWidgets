@@ -12,12 +12,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,6 +45,7 @@ fun WidgetDetailScreen(
     onBackClick: () -> Unit,
     onFavoriteToggle: (Widget) -> Unit
 ) {
+    println("WidgetDetailScreen composable called for ${widget.name}")
     val clipboardManager = LocalClipboardManager.current
     val scrollState = rememberScrollState()
     
@@ -53,8 +54,11 @@ fun WidgetDetailScreen(
             TopAppBar(
                 title = { Text(widget.name) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = { 
+                        println("Back button pressed in WidgetDetailScreen")
+                        onBackClick() 
+                    }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
