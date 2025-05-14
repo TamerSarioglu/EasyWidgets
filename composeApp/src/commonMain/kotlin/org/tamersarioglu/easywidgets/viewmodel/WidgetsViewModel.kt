@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import org.tamersarioglu.easywidgets.data.Widget
 import org.tamersarioglu.easywidgets.data.WidgetCategory
 import org.tamersarioglu.easywidgets.data.WidgetRepository
+import org.tamersarioglu.easywidgets.data.WidgetExample
 
 class WidgetsViewModel : ViewModel() {
     private val repository = WidgetRepository()
@@ -53,6 +54,10 @@ class WidgetsViewModel : ViewModel() {
             SharingStarted.WhileSubscribed(5000),
             emptyList()
         )
+    
+    fun getExamplesForWidget(widget: Widget): List<WidgetExample> {
+        return repository.getExamplesForWidget(widget.name)
+    }
     
     fun setSearchQuery(query: String) {
         _searchQuery.value = query

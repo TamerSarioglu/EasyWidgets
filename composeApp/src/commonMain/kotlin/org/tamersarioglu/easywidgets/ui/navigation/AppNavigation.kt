@@ -5,9 +5,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import org.tamersarioglu.easywidgets.data.Widget
 import org.tamersarioglu.easywidgets.data.WidgetCategory
 import org.tamersarioglu.easywidgets.ui.screens.CategoryScreen
+import org.tamersarioglu.easywidgets.ui.screens.ExampleDetailScreen
+import org.tamersarioglu.easywidgets.ui.screens.ExamplesGalleryScreen
 import org.tamersarioglu.easywidgets.ui.screens.FavoritesScreen
 import org.tamersarioglu.easywidgets.ui.screens.HomeScreen
 import org.tamersarioglu.easywidgets.ui.screens.WidgetDetailScreen
@@ -18,6 +21,8 @@ sealed class Screen {
     data object Favorites : Screen()
     data class Category(val category: WidgetCategory) : Screen()
     data class WidgetDetail(val widget: Widget) : Screen()
+    data object ExamplesGallery : Screen()
+    data class ExampleDetail(val exampleName: String) : Screen()
 }
 
 @Composable
@@ -32,26 +37,29 @@ fun AppNavigation(viewModel: WidgetsViewModel) {
     
     println("Current screen: $currentScreen")
     
-    // Use a when statement to handle different screen types
     when (val screen = currentScreen) {
         is Screen.Home, is Screen.Favorites, is Screen.Category -> {
             AppDrawer(
                 currentScreen = currentScreen,
                 onHomeClick = { navigator.navigateTo(Screen.Home) },
                 onFavoritesClick = { navigator.navigateTo(Screen.Favorites) },
-                onCategoryClick = { category -> navigator.navigateTo(Screen.Category(category)) }
+                onCategoryClick = { category -> navigator.navigateTo(Screen.Category(category)) },
+                onExamplesGalleryClick = { navigator.navigateTo(Screen.ExamplesGallery) }
             ) {
                 when (screen) {
                     is Screen.Home -> {
                         HomeScreen(
                             widgets = widgets,
-                            onWidgetClick = { widget -> 
+                            onWidgetClick = { widget ->
                                 println("HomeScreen: onWidgetClick called with ${widget.name}")
                                 navigator.navigateTo(Screen.WidgetDetail(widget))
                             },
                             onFavoriteToggle = { widget -> viewModel.toggleFavorite(widget) },
                             onCategorySelected = { category -> viewModel.selectCategory(category) },
-                            onSearchQueryChanged = { query -> viewModel.setSearchQuery(query) }
+                            onSearchQueryChanged = { query -> viewModel.setSearchQuery(query) },
+                            onExamplesGalleryClick = { 
+                                navigator.navigateTo(Screen.ExamplesGallery)
+                            }
                         )
                     }
                     is Screen.Favorites -> {
@@ -90,6 +98,18 @@ fun AppNavigation(viewModel: WidgetsViewModel) {
                     navigator.navigateBack() 
                 },
                 onFavoriteToggle = { widget -> viewModel.toggleFavorite(widget) }
+            )
+        }
+        is Screen.ExamplesGallery -> {
+            ExamplesGalleryScreen(
+                onBackClick = { navigator.navigateBack() },
+                onExampleClick = { exampleName -> navigator.navigateTo(Screen.ExampleDetail(exampleName)) }
+            )
+        }
+        is Screen.ExampleDetail -> {
+            ExampleDetailScreen(
+                exampleName = screen.exampleName,
+                onBackClick = { navigator.navigateBack() }
             )
         }
     }

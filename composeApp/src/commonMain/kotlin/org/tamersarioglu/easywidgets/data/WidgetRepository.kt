@@ -14,6 +14,9 @@ class WidgetRepository {
     private val _favoriteWidgets = MutableStateFlow<List<Widget>>(emptyList())
     val favoriteWidgets: StateFlow<List<Widget>> = _favoriteWidgets
 
+    private val _widgetExamples = MutableStateFlow<List<WidgetExample>>(getInitialExamples())
+    val widgetExamples: StateFlow<List<WidgetExample>> = _widgetExamples
+
     init {
         updateFavorites()
     }
@@ -33,6 +36,149 @@ class WidgetRepository {
 
     fun getWidgetsByCategory(category: WidgetCategory): List<Widget> {
         return _widgets.value.filter { it.category == category }
+    }
+
+    fun getExamplesForWidget(widgetName: String): List<WidgetExample> {
+        return _widgetExamples.value.filter { it.parentWidget.name == widgetName }
+    }
+
+    private fun getInitialExamples(): List<WidgetExample> {
+        val widgets = getInitialWidgets()
+        
+        // Find widgets by name
+        val textWidget = widgets.find { it.name == "Text" }
+        val buttonWidget = widgets.find { it.name == "Button" }
+        val rowWidget = widgets.find { it.name == "Row" }
+        val columnWidget = widgets.find { it.name == "Column" }
+        
+        val examples = mutableListOf<WidgetExample>()
+        
+        // Add examples only if the parent widget exists
+        textWidget?.let {
+            examples.add(
+                WidgetExample(
+                    title = "Styled Text",
+                    description = "Text with custom styling including color, size, and weight",
+                    codeSnippet = """
+                        Text(
+                            text = "Styled Text Example",
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    """.trimIndent(),
+                    parentWidget = it
+                )
+            )
+            
+            examples.add(
+                WidgetExample(
+                    title = "Multiline Text",
+                    description = "Text spanning multiple lines with line height and letter spacing",
+                    codeSnippet = """
+                        Text(
+                            text = "This is a longer text that will span multiple lines. " +
+                                   "You can control how the text wraps and flows.",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                lineHeight = 24.sp,
+                                letterSpacing = 0.5.sp
+                            ),
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    """.trimIndent(),
+                    parentWidget = it
+                )
+            )
+        }
+        
+        buttonWidget?.let {
+            examples.add(
+                WidgetExample(
+                    title = "Outlined Button",
+                    description = "Button with an outlined style instead of filled",
+                    codeSnippet = """
+                        OutlinedButton(
+                            onClick = { /* Do something */ }
+                        ) {
+                            Text("Outlined Button")
+                        }
+                    """.trimIndent(),
+                    parentWidget = it
+                )
+            )
+            
+            examples.add(
+                WidgetExample(
+                    title = "Button with Icon",
+                    description = "Button that includes both an icon and text",
+                    codeSnippet = """
+                        Button(
+                            onClick = { /* Do something */ }
+                        ) {
+                            Icon(
+                                Icons.Filled.Send,
+                                contentDescription = "Send",
+                                modifier = Modifier.size(ButtonDefaults.IconSize)
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text("Send")
+                        }
+                    """.trimIndent(),
+                    parentWidget = it
+                )
+            )
+        }
+        
+        rowWidget?.let {
+            examples.add(
+                WidgetExample(
+                    title = "Row with Alignment",
+                    description = "Row with different alignment options",
+                    codeSnippet = """
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .background(Color.LightGray),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("Left")
+                            Text("Center")
+                            Text("Right")
+                        }
+                    """.trimIndent(),
+                    parentWidget = it
+                )
+            )
+        }
+        
+        columnWidget?.let {
+            examples.add(
+                WidgetExample(
+                    title = "Column with Spacing",
+                    description = "Column with custom spacing between items",
+                    codeSnippet = """
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text("Item 1")
+                            Text("Item 2")
+                            Text("Item 3")
+                        }
+                    """.trimIndent(),
+                    parentWidget = it
+                )
+            )
+        }
+        
+        return examples
     }
 
     companion object {

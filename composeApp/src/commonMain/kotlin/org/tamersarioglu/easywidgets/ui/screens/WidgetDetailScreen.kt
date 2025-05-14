@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
@@ -30,24 +29,46 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import org.tamersarioglu.easywidgets.data.Widget
+import org.tamersarioglu.easywidgets.data.WidgetExample
 import org.tamersarioglu.easywidgets.ui.components.CodeSnippet
+import org.tamersarioglu.easywidgets.ui.components.ExampleItem
+import org.tamersarioglu.easywidgets.viewmodel.WidgetsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WidgetDetailScreen(
     widget: Widget,
     onBackClick: () -> Unit,
-    onFavoriteToggle: (Widget) -> Unit
+    onFavoriteToggle: (Widget) -> Unit,
+    viewModel: WidgetsViewModel = remember { WidgetsViewModel() }  // Provide a default ViewModel
 ) {
     println("WidgetDetailScreen composable called for ${widget.name}")
     val clipboardManager = LocalClipboardManager.current
     val scrollState = rememberScrollState()
+    
+    // Check if preview is available for this widget
+    val hasPreview = when (widget.name) {
+        "Text", "Button", "Card", "Row" -> true
+        else -> false
+    }
+    
+    // Get examples for this widget
+    var examples by remember { mutableStateOf<List<WidgetExample>>(emptyList()) }
+    
+    LaunchedEffect(widget) {
+        examples = viewModel.getExamplesForWidget(widget)
+    }
     
     Scaffold(
         topBar = {
@@ -89,6 +110,7 @@ fun WidgetDetailScreen(
                     .padding(16.dp)
                     .verticalScroll(scrollState)
             ) {
+                // Widget Info Card
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -119,29 +141,60 @@ fun WidgetDetailScreen(
                     }
                 }
                 
-                Spacer(modifier = Modifier.height(24.dp))
+                // Preview Section - Only show if preview is available
+                if (hasPreview) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Text(
+                        text = "Preview",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        WidgetPreview(widget)
+                    }
+                    
+                    HorizontalDivider(
+                        Modifier.padding(vertical = 16.dp),
+                        DividerDefaults.Thickness,
+                        DividerDefaults.color
+                    )
+                }
                 
-                Text(
-                    text = "Preview",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    WidgetPreview(widget)
+                // Examples Section - Only show if examples are available
+                if (examples.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Text(
+                        text = "Examples",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    
+                    Column {
+                        examples.forEach { example ->
+                            ExampleItem(example = example)
+                        }
+                    }
+                    
+                    HorizontalDivider(
+                        Modifier.padding(vertical = 16.dp),
+                        DividerDefaults.Thickness,
+                        DividerDefaults.color
+                    )
                 }
 
-                HorizontalDivider(
-                    Modifier.padding(vertical = 16.dp),
-                    DividerDefaults.Thickness,
-                    DividerDefaults.color
-                )
-
+                // Code Snippet Section
+                if (!hasPreview && examples.isEmpty()) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+                
                 Text(
                     text = "Code Snippet",
                     style = MaterialTheme.typography.titleLarge,
@@ -209,6 +262,7 @@ fun WidgetPreview(widget: Widget) {
             }
         }
         else -> {
+            // This should never be called now since we check hasPreview before showing the preview section
             Text(
                 text = "Preview not available for ${widget.name}",
                 style = MaterialTheme.typography.bodyMedium,

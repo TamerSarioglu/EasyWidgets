@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerValue
@@ -48,6 +50,7 @@ fun AppDrawer(
     onHomeClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onCategoryClick: (WidgetCategory) -> Unit,
+    onExamplesGalleryClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -77,6 +80,17 @@ fun AppDrawer(
                     icon = Icons.Filled.Favorite,
                     onClick = {
                         onFavoritesClick()
+                        closeDrawer()
+                    }
+                )
+                
+                // Examples Gallery
+                DrawerItem(
+                    title = "Examples Gallery",
+                    selected = currentScreen is Screen.ExamplesGallery,
+                    icon = Icons.Filled.ViewModule,
+                    onClick = {
+                        onExamplesGalleryClick()
                         closeDrawer()
                     }
                 )
@@ -170,7 +184,7 @@ fun DrawerItem(
                     contentDescription = null,
                     tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.padding(8.dp))
+                Spacer(modifier = Modifier.width(16.dp))
             }
             Text(
                 text = title,
@@ -198,13 +212,16 @@ fun AppScaffold(
                             is Screen.Favorites -> "Favorites"
                             is Screen.Category -> currentScreen.category.title
                             is Screen.WidgetDetail -> currentScreen.widget.name
+                            is Screen.ExamplesGallery -> "Examples Gallery"
+                            is Screen.ExampleDetail -> "${currentScreen.exampleName} Example"
                         }
                     )
                 },
                 navigationIcon = {
-                    if (currentScreen is Screen.WidgetDetail) {
-                        // Don't show drawer menu for widget detail - navigation is handled in WidgetDetailScreen
-                        // The back button is already in WidgetDetailScreen
+                    if (currentScreen is Screen.WidgetDetail || 
+                       currentScreen is Screen.ExamplesGallery || 
+                       currentScreen is Screen.ExampleDetail) {
+                        // Don't show drawer menu for detail screens - navigation is handled in their screens
                     } else {
                         IconButton(onClick = onDrawerClick) {
                             Icon(Icons.Filled.Menu, contentDescription = "Menu")
