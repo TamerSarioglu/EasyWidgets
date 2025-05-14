@@ -44,7 +44,7 @@ fun ExamplesGalleryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Examples Gallery") },
+                title = { Text("Examples") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -53,7 +53,7 @@ fun ExamplesGalleryScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                ),
             )
         }
     ) { paddingValues ->
@@ -66,15 +66,10 @@ fun ExamplesGalleryScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "Component Examples",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                
                 ExampleCard(
                     title = "Tab Row",
                     description = "Shows a tabbed interface with selectable tabs and content",
@@ -143,7 +138,7 @@ fun ExampleDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("$exampleName Example") },
+                title = { Text(exampleName) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -152,7 +147,7 @@ fun ExampleDetailScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                ),
             )
         }
     ) { paddingValues ->

@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.tamersarioglu.easywidgets.data.Widget
-import org.tamersarioglu.easywidgets.data.WidgetCategory
 import org.tamersarioglu.easywidgets.ui.components.WidgetCard
 
 @Composable
@@ -38,7 +36,6 @@ fun HomeScreen(
     widgets: List<Widget>,
     onWidgetClick: (Widget) -> Unit,
     onFavoriteToggle: (Widget) -> Unit,
-    onCategorySelected: (WidgetCategory?) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onExamplesGalleryClick: () -> Unit
 ) {
@@ -67,14 +64,6 @@ fun HomeScreen(
             // Examples Gallery Card
             ExamplesGalleryCard(onClick = onExamplesGalleryClick)
             
-            // Categories
-            CategorySelector(
-                selectedCategory = null,
-                onCategorySelected = { category ->
-                    onCategorySelected(category)
-                }
-            )
-            
             // Widget List
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
@@ -84,7 +73,6 @@ fun HomeScreen(
                     WidgetCard(
                         widget = widget,
                         onCardClick = { clickedWidget ->
-                            println("HomeScreen: Widget clicked: ${clickedWidget.name}")
                             onWidgetClick(clickedWidget)
                         },
                         onFavoriteToggle = onFavoriteToggle
@@ -136,44 +124,4 @@ fun ExamplesGalleryCard(onClick: () -> Unit) {
     }
     
     Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-fun CategorySelector(
-    selectedCategory: WidgetCategory?,
-    onCategorySelected: (WidgetCategory?) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        CategoryChip(
-            title = "All",
-            selected = selectedCategory == null,
-            onClick = { onCategorySelected(null) }
-        )
-        
-        WidgetCategory.entries.forEach { category ->
-            CategoryChip(
-                title = category.title,
-                selected = selectedCategory == category,
-                onClick = { onCategorySelected(category) }
-            )
-        }
-    }
-}
-
-@Composable
-fun CategoryChip(
-    title: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(title) },
-        modifier = Modifier.padding(end = 8.dp)
-    )
 } 
