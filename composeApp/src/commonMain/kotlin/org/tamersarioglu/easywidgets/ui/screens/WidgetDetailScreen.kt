@@ -51,7 +51,7 @@ fun WidgetDetailScreen(
     widget: Widget,
     onBackClick: () -> Unit,
     onFavoriteToggle: (Widget) -> Unit,
-    viewModel: WidgetsViewModel = remember { WidgetsViewModel() }  // Provide a default ViewModel
+    viewModel: WidgetsViewModel
 ) {
     println("WidgetDetailScreen composable called for ${widget.name}")
     val clipboardManager = LocalClipboardManager.current
