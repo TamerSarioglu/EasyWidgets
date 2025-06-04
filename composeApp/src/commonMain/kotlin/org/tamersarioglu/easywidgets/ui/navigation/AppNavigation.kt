@@ -159,7 +159,8 @@ fun AppNavigation(viewModel: WidgetsViewModel) {
                         WidgetDetailScreen(
                             widget = screen.widget,
                             onBackClick = { navigator.navigateBack() },
-                            onFavoriteToggle = { widget -> viewModel.toggleFavorite(widget) }
+                            onFavoriteToggle = { widget -> viewModel.toggleFavorite(widget) },
+                            viewModel = viewModel
                         )
                     }
                     is Screen.ExampleDetail -> {
